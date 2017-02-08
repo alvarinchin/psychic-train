@@ -18,6 +18,7 @@
 		#editBar{
 			display:  none;
 			height: 150px;
+			background-color: lightgrey;
 
 		}
 
@@ -50,33 +51,36 @@
 		if(modoEditar){
 			
 			var nodo = e.target;
-			
-		switch (nodo.nodeName) {
-			case "H1":
-			case "H2":
-			case "H3":
-			case "H4":
-			editarCabeceras(nodo);
-			break;
-			case "P":
-			editarParrafos(nodo);
-			break;
-			case "INPUT":
-			editarInputs(nodo);
-			break;
-			case "boton":
-			botones();
-			break;
-			case "lista":
-			lista();
-			break;
-			case "checkbox":
-			check();
-			break;
-			case "radio":
-			radio();
-			break;
-			default:
+			console.log (nodo.getAttribute("type"));
+			switch (nodo.nodeName) {
+				case "H1":
+				case "H2":
+				case "H3":
+				case "H4":
+				editarCabeceras(nodo);
+				break;
+				case "P":
+				editarParrafos(nodo);
+				break;
+				case "INPUT":
+								tipo =nodo.getAttribute("type");
+								if (tipo=="button")editarBotones(nodo);
+
+
+				break;
+				case "boton":
+				editabotones();
+				break;
+				case "lista":
+				lista();
+				break;
+				case "checkbox":
+				check();
+				break;
+				case "radio":
+				radio();
+				break;
+				default:
 				// statements_def
 				break;
 			}
@@ -92,6 +96,7 @@
 
 	boton.type="button";
 	boton.value="Añadir";
+	boton.className="btn btn-primary";
 
 	window.onload=function(){
 		var contenido=document.getElementById("contenido");
@@ -145,6 +150,7 @@
 
 			b.type="button";
 			b.value="Modificar";
+			b.className="btn btn-primary";
 			var opciones=document.getElementById("opciones");
 			opciones.innerHTML=null;
 
@@ -222,6 +228,7 @@ function editarParrafos(nodo){
 
 	b.type="button";
 	b.value="Modificar";
+	b.className="btn btn-primary";
 	var opciones= document.getElementById("opciones");
 	var texto= document.createElement("input");	
 
@@ -281,6 +288,7 @@ function parrafosCrear(){
 function editarInputs(nodo){
 
 	var opciones=document.getElementById("opciones");
+	opciones.innerHTML=null;
 
 	var ident = document.createElement("input");
 	var nombre= document.createElement("input");
@@ -344,6 +352,34 @@ function inputsCrear(){
 	document.getElementById("contenido").appendChild(caja);
 	document.getElementById("opciones").innerHTML=null;
 }
+
+
+function editarBotones(nodo){
+
+	var opciones=document.getElementById("opciones");
+	opciones.innerHTML=null;
+
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+
+	var valor= document.createElement("input");
+	valor.value=nodo.getAttribute("value");
+	
+	b.addEventListener("click",function(){
+
+		nodo.setAttribute("value", valor.value);
+		opciones.innerHTML=null;
+
+
+	},false);
+
+	opciones.appendChild(valor);
+
+	opciones.appendChild(b);
+}
+
 function botones(){
 
 	var opciones= document.getElementById("opciones");
