@@ -51,7 +51,7 @@
 		if(modoEditar){
 			
 			var nodo = e.target;
-			console.log (nodo.getAttribute("type"));
+			console.log (nodo.nodeName);
 			switch (nodo.nodeName) {
 				case "H1":
 				case "H2":
@@ -65,11 +65,13 @@
 				case "INPUT":
 								tipo =nodo.getAttribute("type");
 								if (tipo=="button")editarBotones(nodo);
+								if (tipo=="text")editarBotones(nodo);
+
 
 
 				break;
-				case "boton":
-				editabotones();
+				case "LI":
+				editarLista(nodo);
 				break;
 				case "lista":
 				lista();
@@ -409,6 +411,56 @@ function botonesCrear(){
 
 	contenido.appendChild(bot);
 	opciones.innerHTML=null;
+
+}
+
+function editarLista(nodo){
+var opciones=document.getElementById("opciones");
+	opciones.innerHTML=null;
+
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+
+
+}
+function lista(){
+	var opciones= document.getElementById("opciones");
+	var area=document.createElement("textarea");
+	var orden = document.createElement("input");
+	var tx = document.createTextNode("¿Ordenado?");
+	orden.id="orden";
+	orden.type="checkbox";
+	area.id="lis";
+	boton.addEventListener("click",listaCrear,false);
+
+	opciones.appendChild(area);
+	opciones.appendChild(tx);
+	opciones.appendChild(orden);
+	opciones.appendChild(boton);
+
+}
+function listaCrear(){
+var contenido=document.getElementById("contenido");
+	var opciones= document.getElementById("opciones");
+	var orden = document.getElementById("orden")==true?"ol":"ul";
+	var unlist=document.createElement(orden);
+
+	var lis= document.getElementById("lis").value.split(",");
+
+	for(i=0;i<lis.length;i++){
+
+		var l=document.createElement("li");
+		var tx=document.createTextNode(lis[i]);
+		l.appendChild(tx);
+		unlist.appendChild(l);
+
+	}
+
+	contenido.appendChild(unlist);
+	opciones.innerHTML=null;
+
 
 }
 
