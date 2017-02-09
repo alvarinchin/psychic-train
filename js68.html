@@ -56,6 +56,8 @@
 			
 			var nodo = e.target;
 			console.log (nodo.getAttribute("type"));
+			console.log (nodo.nodeName);
+
 			switch (nodo.nodeName) {
 				case "H1":
 				case "H2":
@@ -75,11 +77,11 @@
 				case "LI":
 				editarLista(nodo);
 				break;
-				case "lista":
-				lista();
+				case "OPTION":
+				editarLista(document.getParent(nodo);
 				break;
-				case "checkbox":
-				check();
+				case "SELECT":
+				editarLista();
 				break;
 				case "radio":
 				radio();
@@ -429,6 +431,14 @@ function editarLista(nodo){
 	b.value="Modificar";
 	b.className="btn btn-primary";
 
+	var area=document.createElement("textarea");
+	var nombre = document.createElement("input");
+	var tam = document.createElement("input");
+	var multi = document.createElement("input");
+
+
+
+
 
 }
 function lista(){
@@ -437,38 +447,52 @@ function lista(){
 	var nombre = document.createElement("input");
 	var tam = document.createElement("input");
 	var multi = document.createElement("input");
+
 	area.id="lis";
-	orden.id="nombre";
+	nombre.id="nombre";
 	tam.id="taman";
 	multi.id="multi";
-	vat txtam= document.createTextNode("tamaño");
-	vat txmult= document.createTextNode("¿multiple?");
+
+	multi.type="checkbox";
+	tam.type="number";
+
+	var txtam= document.createTextNode("tamaño");
+	var txmult= document.createTextNode("¿multiple?");
 	boton.addEventListener("click",listaCrear,false);
 
 	opciones.appendChild(area);
-	opciones.appendChild(tx);
-	opciones.appendChild(orden);
+	opciones.appendChild(nombre);
+	opciones.appendChild(txtam);
+	opciones.appendChild(tam);
+	opciones.appendChild(txmult);
+	opciones.appendChild(multi);
 	opciones.appendChild(boton);
 
 }
 function listaCrear(){
 	var contenido=document.getElementById("contenido");
 	var opciones= document.getElementById("opciones");
-	var orden = document.getElementById("orden")==true?"ol":"ul";
-	var unlist=document.createElement(orden);
+	var nombre = document.getElementById("nombre").value;
+	var sel=document.createElement("select");
+	var multi= document.getElementById("multi").value;
+	var tam= document.getElementById("taman").value;
 
-	var lis= document.getElementById("lis").value.split(",");
+	sel.name=nombre;
+	sel.multiple=multi==true?"multi":null;
+	sel.size=tam;
 
-	for(i=0;i<lis.length;i++){
+	var ops= document.getElementById("lis").value.split(",");
 
-		var l=document.createElement("li");
-		var tx=document.createTextNode(lis[i]);
-		l.appendChild(tx);
-		unlist.appendChild(l);
+	for(i=0;i<ops.length;i++){
+
+		var o=document.createElement("option");
+		var tx=document.createTextNode(ops[i]);
+		o.appendChild(tx);
+		sel.appendChild(o);
 
 	}
 
-	contenido.appendChild(unlist);
+	contenido.appendChild(sel);
 	opciones.innerHTML=null;
 
 
