@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,17 +22,13 @@
 			display:  none;
 			height: 150px;
 			background-color: lightgrey;
-
 		}
-
 	</style>
 	<script type="text/javascript">
-
 		var modoEditar=false;
 		
 		/*
 	El usuario puede insertar, borrar o modificar contenido de 
-
 	cabeceras de nivel
 	parrafos
 	cajas de texto
@@ -41,17 +36,11 @@
 	listas
 	checkbox
 	y radios
-
-
-
 	*/
 	function EventosEdicion(){
-
 		contenido.onmousedown=edicion;
-
 	}
 	function edicion(e){
-
 		if(modoEditar){
 			
 			var nodo = e.target;
@@ -70,7 +59,6 @@
 				tipo =nodo.getAttribute("type");
 				if (tipo=="button")editarBotones(nodo);
 				if (tipo=="text")editarInputs(nodo);
-
 				break;
 				case "LI":
 				editarLista(nodo);
@@ -91,17 +79,11 @@
 		}
 		
 		
-
-
-
 	}
-
 	var boton = document.createElement("input");
-
 	boton.type="button";
 	boton.value="Añadir";
 	boton.className="btn btn-primary";
-
 	window.onload=function(){
 		var contenido=document.getElementById("contenido");
 		var opciones= document.getElementById("opciones");
@@ -116,7 +98,6 @@
 			modoEditar=false;
 		}
 	}
-
 	function cargarElemento(elem){
 		document.getElementById("opciones").innerHTML=null;
 		
@@ -146,163 +127,106 @@
 				// statements_def
 				break;
 			}
-
 		}
 		function editarCabeceras(nodo){
 			var contenido= document.getElementById("contenido");
 			var b = document.createElement("input");
-
 			b.type="button";
 			b.value="Modificar";
 			b.className="btn btn-primary";
 			var opciones=document.getElementById("opciones");
 			opciones.innerHTML=null;
-
 			var nivel = document.createElement("input");
 			var texto= document.createElement("input");
 			
 			nivel.type="number";
 			nivel.id="nivel";
 			nivel.value=parseInt(nodo.nodeName.toString().substring(1,nodo.nodeName.toString().length));
-
 			texto.id="cont";
 			texto.value=nodo.innerHTML;
-
 			b.addEventListener("click",function(){
 				nodo.remove();
-
 				var numero = nivel.value>4?4:nivel.value;
 				nuevoNivel= "h"+numero;
-
 				var nodo2=document.createElement(nuevoNivel);
 				nodo2.innerHTML=texto.value;
 				contenido.appendChild(nodo2);
 				opciones.innerHTML=null;
-
 			},false);
-
 			opciones.appendChild(texto);
 			opciones.appendChild(nivel);
 			opciones.appendChild(b);
 		}
-
 		function cabeceras(){
-
 			var opciones=document.getElementById("opciones");
 			var nivel = document.createElement("input");
 			var texto= document.createElement("input");
 			
 			nivel.type="number";
 			nivel.id="nivel";
-
 			texto.id="cont";
-
 			boton.addEventListener("click",cabecerasCrear,false);
 	//event dispatcher lanza el evento
-
 	//boton.dispatchEvent(event);
 	
-
-
 	opciones.appendChild(texto);
 	opciones.appendChild(nivel);
 	opciones.appendChild(boton);
-
 }
-
 function cabecerasCrear(){
-
 	var contenido= document.getElementById("cont").value;
 	var numero = document.getElementById("nivel").value>4?4:document.getElementById("nivel").value;
 	var nivel= "h"+numero;
-
 	var cabecera=document.createElement(nivel);
 	cabecera.appendChild(document.createTextNode(contenido));
-
 	document.getElementById("contenido").appendChild(cabecera);
-
-
 	document.getElementById("opciones").innerHTML=null;
-
-
 }
 function editarParrafos(nodo){
-
 	var b = document.createElement("input");
-
 	b.type="button";
 	b.value="Modificar";
 	b.className="btn btn-primary";
 	var opciones= document.getElementById("opciones");
 	var texto= document.createElement("input");	
-
 	texto.innerHTML=nodo.innerHTML;
-
-
 	b.addEventListener("click",function(){
-
 		nodo.innerHTML=texto.value;
 		opciones.innerHTML=null;
-
 	},false);
-
 	opciones.appendChild(texto);
-
 	opciones.appendChild(b);
 }
-
-
 function parrafos(valor){
-
 	
 	var opciones= document.getElementById("opciones");
 	var texto= document.createElement("input");
 	
-
 	texto.id="cont";
-
-
 	boton.addEventListener("click",parrafosCrear,false);
 	//event dispatcher lanza el evento
-
 	//boton.dispatchEvent(event);
 	
-
-
 	opciones.appendChild(texto);
 	opciones.appendChild(boton);
-
 }
-
 function parrafosCrear(){
-
 	var contenido= document.getElementById("cont").value;
-
 	var parrafo=document.createElement("p");
 	parrafo.appendChild(document.createTextNode(contenido));
-
 	document.getElementById("contenido").appendChild(parrafo);
-
-
 	document.getElementById("opciones").innerHTML=null;
-
-
 }
-
 function editarInputs(nodo){	
-
 	var contenido= document.getElementById("contenido");
 	var b = document.createElement("input");
-
 	b.type="button";
 	b.value="Modificar";
 	b.className="btn btn-primary";
 	var opciones=document.getElementById("opciones");
 	opciones.innerHTML=null;
-
 	var idNodo = document.createElement("input");
 	var nombreNodo= document.createElement("input");
-
 	b.addEventListener("click",function(){
 				//nodo.remove();
 				//var nodo2=document.createElement(nuevoNivel);
@@ -310,126 +234,84 @@ function editarInputs(nodo){
 				nodo.name=nombreNodo.value;
 				//contenido.appendChild(nodo2);
 				opciones.innerHTML=null;
-
 			},false);
-
 	opciones.appendChild(idNodo);
 	opciones.appendChild(nombreNodo);
 	opciones.appendChild(b);
-
-
 }
-
 function inputs(nombre){
-
 	var opciones=document.getElementById("opciones");
-
 	var ident = document.createElement("input");
 	var nombre= document.createElement("input");
 	
 	ident.type="text";
 	ident.name=nombre;
 	ident.id="id";
-
-
 	nombre.type="text";
 	nombre.name=nombre;
 	nombre.id="nombre";
-
-
 	boton.addEventListener("click",inputsCrear,false);
-
-
-
 	opciones.appendChild(ident);
 	opciones.appendChild(nombre);
 	opciones.appendChild(boton);
-
 }
-
 function inputsCrear(){
-
 	var ide= document.getElementById("ident").value;
 	var nombre= document.getElementById("nombre").value;
-
 	var caja=document.createElement("input");
 	caja.type="text";
 	caja.id=ide;
 	caja.name=nombre;
-
 	document.getElementById("contenido").appendChild(caja);
 	document.getElementById("opciones").innerHTML=null;
 }
-
-
 function editarBotones(nodo){
-
 	var opciones=document.getElementById("opciones");
 	opciones.innerHTML=null;
-
 	var b = document.createElement("input");
 	b.type="button";
 	b.value="Modificar";
 	b.className="btn btn-primary";
-
 	var valor= document.createElement("input");
 	valor.value=nodo.getAttribute("value");
 	
 	b.addEventListener("click",function(){
-
 		nodo.setAttribute("value", valor.value);
 		opciones.innerHTML=null;
-
-
 	},false);
-
 	opciones.appendChild(valor);
-
 	opciones.appendChild(b);
 }
-
 function botones(){
-
 	var opciones= document.getElementById("opciones");
 	var valor= document.createElement("input");
 	
 	
 	boton.addEventListener("click",botonesCrear,false);
-
 	valor.id="valor";
 	
-
 	opciones.appendChild(valor);
-
 	opciones.appendChild(boton);
-
 }
 function botonesCrear(){
 	var contenido=document.getElementById("contenido");
 	var opciones= document.getElementById("opciones");
 	var valor=document.getElementById("valor").value;
-
 	
 	var bot = document.createElement("input");
 	bot.type="button";
 	bot.value=valor;
 	
-
 	contenido.appendChild(bot);
 	opciones.innerHTML=null;
-
 }
-
 function editarLista(nodo){
 	var opciones=document.getElementById("opciones");
 	opciones.innerHTML=null;
-
 	var b = document.createElement("input");
 	b.type="button";
 	b.value="Modificar";
 	b.className="btn btn-primary";
-
-
 }
 function lista(){
 	var opciones= document.getElementById("opciones");
@@ -441,41 +323,68 @@ function lista(){
 	orden.id="nombre";
 	tam.id="taman";
 	multi.id="multi";
-	vat txtam= document.createTextNode("tamaño");
-	vat txmult= document.createTextNode("¿multiple?");
+	var txtam= document.createTextNode("tamaño");
+	var txmult= document.createTextNode("¿multiple?");
 	boton.addEventListener("click",listaCrear,false);
-
 	opciones.appendChild(area);
 	opciones.appendChild(tx);
 	opciones.appendChild(orden);
 	opciones.appendChild(boton);
-
 }
 function listaCrear(){
 	var contenido=document.getElementById("contenido");
 	var opciones= document.getElementById("opciones");
 	var orden = document.getElementById("orden")==true?"ol":"ul";
 	var unlist=document.createElement(orden);
-
 	var lis= document.getElementById("lis").value.split(",");
-
 	for(i=0;i<lis.length;i++){
-
 		var l=document.createElement("li");
 		var tx=document.createTextNode(lis[i]);
 		l.appendChild(tx);
 		unlist.appendChild(l);
-
 	}
-
 	contenido.appendChild(unlist);
 	opciones.innerHTML=null;
-
-
 }
 
+function checkboxes(){
+	var opciones= document.getElementById("opciones");
+	var nombre= document.createElement("input");
+	var valoresTextos = document.createElement("textarea");
+	var radios =document.getElementById("valoresTextos").value.split(",");
+	var r = document.createElement("input");
+	
 
+	for(i=0;i<radios.length;i++){
+		r.value = radios[i].split(":")[1];
+		var tx = document.createTextNode(radios[i].split(":")[0])
+	}
+	r.name=nombre;
+	
+	
 
+	opciones.appendChild(tx);
+	opciones.appendChild(r);
+	
+	
+
+	boton.addEventListener("click",checkboxesCrear,false);
+		
+	//opciones.appendChild(valor);
+	//opciones.appendChild(boton);
+}
+function checkboxesCrear(){
+	var contenido=document.getElementById("contenido");
+	var opciones= document.getElementById("opciones");
+	var valor=document.getElementById("valor").value;
+	
+	var bot = document.createElement("input");
+	bot.type="button";
+	bot.value=valor;
+	
+	contenido.appendChild(bot);
+	opciones.innerHTML=null;
+}
 </script>
 </head>
 <body>
@@ -484,7 +393,6 @@ function listaCrear(){
 		<select class="form-control" onchange="cargarElemento(this.value)" name="elementos">
 
 			<script type="text/javascript">
-
 				opciones = [{"clave":"","valor":"Seleccione una opcion"},
 				{"clave":"cabecera","valor":"Cabeceras de nivel"},
 				{"clave":"parraf","valor":"Parrafos"},
@@ -493,7 +401,6 @@ function listaCrear(){
 				{"clave":"lista","valor":"Listas"},
 				{"clave":"checkbox","valor":"Checkbox"},
 				{"clave":"radio","valor":"Radios"}];
-
 				for (var i = 0; i < opciones.length; i++) {
 					document.write("<option value='"+opciones[i].clave+"'>"+opciones[i].valor+"</option>");
 				}
