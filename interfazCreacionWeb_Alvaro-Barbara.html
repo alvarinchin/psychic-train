@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="author" content="Álvaro y Bárbara">
+	<title>Interfaz creación páginas</title>
+	<script
+	src="https://code.jquery.com/jquery-3.1.1.min.js"
+	integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+	crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+	<style type="text/css">
+		
+		#editBar{
+			display:  none;
+			height: 150px;
+			background-color: lightgrey;
+		}
+	</style>
+	<script type="text/javascript">
+		var modoEditar=false;
+		document.oncontextmenu=function(){return false};
+		
+		/*
+	El usuario puede insertar, borrar o modificar contenido de 
+	cabeceras de nivel
+	parrafos
+	cajas de texto
+	botones
+	listas
+	checkbox
+	y radios
+	*/
+	function EventosEdicion(){
+		contenido.onmousedown=edicion;
+	}
+	function edicion(e){
+		if(modoEditar){
+			console.log(e.which);
+			
+			if(e.which==1) {
+				// statement
+			
+			var nodo = e.target;
+			console.log (nodo.getAttribute("type"));
+			switch (nodo.nodeName) {
+				case "H1":
+				case "H2":
+				case "H3":
+				case "H4":
+				editarCabeceras(nodo);
+				break;
+				case "P":
+				editarParrafos(nodo);
+				break;
+				case "INPUT":
+				tipo =nodo.getAttribute("type");
+				if (tipo=="button")editarBotones(nodo);
+				if (tipo=="text")editarInputs(nodo);
+				if (tipo=="radio")editarRadios(nodo);
+				if (tipo=="checkbox")editarCheckboxes(nodo);
+				break;
+				case "OPTION":
+				editarLista(nodo.parentNode);
+				break;
+				case "SELECT":
+				editarLista(nodo);
+				break;
+				case "checkbox":
+				check();
+				break;
+				case "radio":
+				break;
+				default:
+				// statements_def
+				break;
+			}
+			}
+			if(e.which==3){
+				var r = document.getElementsByName(e.target.name);
+				for (var i = 0; i < r.length; i++) {
+					r[i].nextSibling.remove();
+					r[i].remove();
+				}
+				e.target.remove();
+				opciones.innerHTML=null;
+			
+			}
+		}
+		
+		
+	}
+	var boton = document.createElement("input");
+	boton.type="button";
+	boton.value="Añadir";
+	boton.className="btn btn-primary";
+	window.onload=function(){
+		var contenido=document.getElementById("contenido");
+		var opciones= document.getElementById("opciones");
+	}
+	function aparecer(){
+		if (modoEditar==false){
+			document.getElementById("editBar").style.display="block";
+			modoEditar=true;
+			EventosEdicion();
+		}else {
+			document.getElementById("editBar").style.display="none";
+			modoEditar=false;
+		}
+	}
+	function cargarElemento(elem){
+		document.getElementById("opciones").innerHTML=null;
+		
+		switch (elem) {
+			case "cabecera":
+			cabeceras();
+			break;
+			case "parraf":
+			parrafos();
+			break;
+			case "input":
+			inputs();
+			break;
+			case "boton":
+			botones();
+			break;
+			case "lista":
+			lista();
+			break;
+			case "checkbox":
+			checkboxes();
+			break;
+			case "radio":
+			radios();
+			break;
+			default:
+				// statements_def
+				break;
+			}
+		}
+		function editarCabeceras(nodo){
+			var contenido= document.getElementById("contenido");
+			var b = document.createElement("input");
+			var nuevoTextoCabecera = document.createTextNode("Introduzca el texto nuevo: ");
+			var nuevoNivelCab = document.createTextNode("Elija un nuevo nivel: ");
+			b.type="button";
+			b.value="Modificar";
+			b.className="btn btn-primary";
+			var opciones=document.getElementById("opciones");
+			opciones.innerHTML=null;
+			var nivel = document.createElement("input");
+			var texto= document.createElement("input");
+			
+			nivel.type="number";
+			nivel.id="nivel";
+			nivel.value=parseInt(nodo.nodeName.toString().substring(1,nodo.nodeName.toString().length));
+			texto.id="cont";
+			texto.value=nodo.innerHTML;
+			b.addEventListener("click",function(){
+				nodo.remove();
+				var numero = nivel.value>4?4:nivel.value;
+				nuevoNivel= "h"+numero;
+				var nodo2=document.createElement(nuevoNivel);
+				nodo2.innerHTML=texto.value;
+				contenido.appendChild(nodo2);
+				opciones.innerHTML=null;
+			},false);
+			opciones.appendChild(nuevoTextoCabecera);
+			opciones.appendChild(texto);
+			opciones.appendChild(nuevoNivelCab);
+			opciones.appendChild(nivel);
+			opciones.appendChild(b);
+		}
+		function cabeceras(){
+			var opciones=document.getElementById("opciones");
+			var nivel = document.createElement("input");
+			var texto= document.createElement("input");
+			var textoCabecera = document.createTextNode("Introduzca el texto: ");
+			var nivelCab = document.createTextNode("Elija el nivel de la cabecera: ");
+			
+			nivel.type="number";
+			nivel.id="nivel";
+			texto.id="cont";
+			boton.addEventListener("click",cabecerasCrear,false);
+	//event dispatcher lanza el evento
+	//boton.dispatchEvent(event);
+	opciones.appendChild(textoCabecera);
+	opciones.appendChild(texto);
+	opciones.appendChild(nivelCab);
+	opciones.appendChild(nivel);
+	opciones.appendChild(boton);
+}
+function cabecerasCrear(){
+	var contenido= document.getElementById("cont").value;
+	var numero = document.getElementById("nivel").value>4?4:document.getElementById("nivel").value;
+	var nivel= "h"+numero;
+	var cabecera=document.createElement(nivel);
+	cabecera.appendChild(document.createTextNode(contenido));
+	document.getElementById("contenido").appendChild(cabecera);
+	document.getElementById("opciones").innerHTML=null;
+}
+function editarParrafos(nodo){
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+	var opciones= document.getElementById("opciones");
+	var texto= document.createElement("textarea");	
+	var nuevoTextoParrafo = document.createTextNode("Introduzca el nuevo texto del párrafo: ");
+	texto.innerHTML=nodo.innerHTML;
+	b.addEventListener("click",function(){
+		nodo.innerHTML=texto.value;
+		opciones.innerHTML=null;
+	},false);
+	opciones.appendChild(texto);
+	opciones.appendChild(b);
+}
+function parrafos(valor){
+	
+	var opciones= document.getElementById("opciones");
+	var texto= document.createElement("textarea");
+	var textoParrafo = document.createTextNode("Introduzca el texto del párrafo: ");
+	
+	texto.id="cont";
+	boton.addEventListener("click",parrafosCrear,false);
+	//event dispatcher lanza el evento
+	//boton.dispatchEvent(event);
+	opciones.appendChild(textoParrafo);
+	opciones.appendChild(texto);
+	opciones.appendChild(boton);
+}
+function parrafosCrear(){
+	var contenido= document.getElementById("cont").value;
+	var parrafo=document.createElement("p");
+	parrafo.appendChild(document.createTextNode(contenido));
+	document.getElementById("contenido").appendChild(parrafo);
+	document.getElementById("opciones").innerHTML=null;
+}
+function editarInputs(nodo){	
+	var contenido= document.getElementById("contenido");
+	var b = document.createElement("input");
+	var nuevoValorId = document.createTextNode("Nuevo id: ");
+	var nuevoValorNombre = document.createTextNode("Nuevo nombre: ");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+	var opciones=document.getElementById("opciones");
+	opciones.innerHTML=null;
+	var idNodo = document.createElement("input");
+	var nombreNodo= document.createElement("input");
+	b.addEventListener("click",function(){
+				//nodo.remove();
+				//var nodo2=document.createElement(nuevoNivel);
+				nodo.id=idNodo.value;
+				nodo.name=nombreNodo.value;
+				//contenido.appendChild(nodo2);
+				opciones.innerHTML=null;
+			},false);
+	opciones.appendChild(nuevoValorId);
+	opciones.appendChild(idNodo);
+	opciones.appendChild(nuevoValorNombre);
+	opciones.appendChild(nombreNodo);
+	opciones.appendChild(b);
+}
+function inputs(nombre){
+	var opciones=document.getElementById("opciones");
+	var ident = document.createElement("input");
+	var nombre= document.createElement("input");
+	var valorId = document.createTextNode("Id: ");
+	var valorNombre = document.createTextNode("Nombre: ");
+	ident.type="text";
+	ident.name=nombre;
+	ident.id="ident";
+	nombre.type="text";
+	nombre.name=nombre;
+	nombre.id="nombre";
+	boton.addEventListener("click",inputsCrear,false);
+	opciones.appendChild(valorId);
+	opciones.appendChild(ident);
+	opciones.appendChild(valorNombre);
+	opciones.appendChild(nombre);
+	opciones.appendChild(boton);
+}
+function inputsCrear(){
+	var ide= document.getElementById("ident").value;
+	var nombre= document.getElementById("nombre").value;
+	var caja=document.createElement("input");
+	caja.type="text";
+	caja.id=ide;
+	caja.name=nombre;
+	document.getElementById("contenido").appendChild(caja);
+	document.getElementById("opciones").innerHTML=null;
+}
+function editarBotones(nodo){
+	var opciones=document.getElementById("opciones");
+	opciones.innerHTML=null;
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+	var valor= document.createElement("input");
+	valor.value=nodo.getAttribute("value");
+	var valorBoton = document.createTextNode("Nuevo valor del botón: ");
+	
+	b.addEventListener("click",function(){
+		nodo.setAttribute("value", valor.value);
+		opciones.innerHTML=null;
+	},false);
+	opciones.appendChild(valorBoton);
+	opciones.appendChild(valor);
+	opciones.appendChild(b);
+}
+function botones(){
+	var opciones= document.getElementById("opciones");
+	var valor= document.createElement("input");
+	var valorBoton = document.createTextNode("Valor del botón: ");
+	
+	
+	
+	boton.addEventListener("click",botonesCrear,false);
+	valor.id="valor";
+	
+	opciones.appendChild(valorBoton);
+	opciones.appendChild(valor);
+	opciones.appendChild(boton);
+}
+function botonesCrear(){
+	var contenido=document.getElementById("contenido");
+	var opciones= document.getElementById("opciones");
+	var valor=document.getElementById("valor").value;
+	
+	var bot = document.createElement("input");
+	bot.type="button";
+	bot.value=valor;
+	
+	contenido.appendChild(bot);
+	opciones.innerHTML=null;
+}
+function editarLista(nodo){
+	var opciones=document.getElementById("opciones");
+	opciones.innerHTML=null;
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+	var nombreSelect = document.createTextNode("Nombre del select: ");
+	var opc = document.createTextNode("Introduzca las opciones: ");
+	var area=document.createElement("textarea");
+	var nombre = document.createElement("input");
+	var tam = document.createElement("input");
+	var multi = document.createElement("input");
+	var txtam= document.createTextNode("Elige un tamaño: ");
+	var txmult= document.createTextNode("¿Múltiple?");
+	tam.type="number";
+	multi.type="checkbox";
+	nombre.value=nodo.name;
+	tam.value=nodo.getAttribute("size");
+	multi.checked=nodo.getAttribute("multiple");
+	for (i=0;i<nodo.options.length;i++){
+		if(i==nodo.options.length-1){
+			area.value+=nodo.options[i].innerHTML;
+		}else{
+			area.value+=nodo.options[i].innerHTML+",";
+		}
+	}
+	b.addEventListener("click",function(){
+		nodo.options.length="";
+		nodo.setAttribute("size",tam.value);
+		nodo.setAttribute("multiple",multi.checked);
+		var opts= area.value.split(",");
+		for (i=0;i<opts.length;i++){
+			nodo.options[i]= new Option(opts[i]);
+		}
+		opciones.innerHTML=null;
+	},false);
+	opciones.appendChild(opc);
+	opciones.appendChild(area);
+	opciones.appendChild(nombreSelect);
+	opciones.appendChild(nombre);
+	opciones.appendChild(txtam);
+	opciones.appendChild(tam);
+	opciones.appendChild(txmult);
+	opciones.appendChild(multi);
+	opciones.appendChild(b);
+}
+function lista(){
+	var opciones= document.getElementById("opciones");
+	var area=document.createElement("textarea");
+	var nombre = document.createElement("input");
+	var tam = document.createElement("input");
+	var multi = document.createElement("input");
+	var nombreSelect = document.createTextNode("Nombre del select: ");
+	var opc = document.createTextNode("Introduzca las opciones: ");
+	area.id="lis";
+	area.placeholder="Ej.: Rock,Pop,Heavy...";
+	nombre.id="nombre";
+	tam.id="taman";
+	multi.id="multi";
+	multi.type="checkbox";
+	tam.type="number";
+	var txtam= document.createTextNode("Elige un tamaño: ");
+	var txmult= document.createTextNode("¿Múltiple?");
+	boton.addEventListener("click",listaCrear,false);
+	opciones.appendChild(opc);
+	opciones.appendChild(area);
+	opciones.appendChild(nombreSelect);
+	opciones.appendChild(nombre);
+	opciones.appendChild(txtam);
+	opciones.appendChild(tam);
+	opciones.appendChild(txmult);
+	opciones.appendChild(multi);
+	opciones.appendChild(boton);
+}
+function listaCrear(){
+	var contenido=document.getElementById("contenido");
+	var opciones= document.getElementById("opciones");
+	var nombre = document.getElementById("nombre").value;
+	var sel=document.createElement("select");
+	var multi= document.getElementById("multi").checked;
+	var tam= document.getElementById("taman").value;
+	multi==true?sel.multiple="multiple":null;
+	sel.name=nombre;
+	sel.size=tam;
+	var ops= document.getElementById("lis").value.split(",");
+	for(i=0;i<ops.length;i++){
+		var o=document.createElement("option");
+		var tx=document.createTextNode(ops[i]);
+		o.appendChild(tx);
+		sel.appendChild(o);
+	}
+	contenido.appendChild(sel);
+	opciones.innerHTML=null;
+}
+
+function checkboxes(){
+	var opciones= document.getElementById("opciones");
+	var nombre= document.createElement("input");
+	var valoresTextos = document.createElement("textarea");
+	var nombreCheck = document.createTextNode("Nombre del checkbox: ");
+	var textoValor = document.createTextNode("Texto y valor de los checkbox: ");
+	
+	boton.addEventListener("click",checkboxesCrear,false);
+
+	nombre.id="idNombre";
+	valoresTextos.id="valoresTextos";
+	valoresTextos.placeholder="Ej.: Perro:perro,Gato:gato...";	
+	opciones.appendChild(nombreCheck);
+	opciones.appendChild(nombre);
+	opciones.appendChild(textoValor);
+	opciones.appendChild(valoresTextos);
+	opciones.appendChild(boton);
+
+	
+		
+	//opciones.appendChild(valor);
+	//opciones.appendChild(boton);
+}
+function checkboxesCrear(){
+	var contenido=document.getElementById("contenido");
+	var opciones= document.getElementById("opciones");
+	var nombre=document.getElementById("idNombre").value;
+
+	var checkboxes =document.getElementById("valoresTextos").value.split(",");
+	
+	
+	for(i=0;i<checkboxes.length;i++){
+		var c = document.createElement("input");
+
+		c.value = checkboxes[i].split(":")[1];
+		c.name=nombre;
+		c.type="checkbox";
+		contenido.appendChild(c);
+		var tx = document.createTextNode(checkboxes[i].split(":")[0]);		
+		contenido.appendChild(tx);
+		
+	}
+	
+	
+	opciones.innerHTML=null;
+}
+function editarCheckboxes(nodo){
+	var opciones= document.getElementById("opciones");
+	opciones.innerHTML=null;
+	var nombre= document.createElement("input");
+	var valoresTextos = document.createElement("textarea");
+	var nombreCheckbox = document.createTextNode("Nombre del checkbox: ");
+	var textoValor = document.createTextNode("Texto y valor de los checkbox: ");
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+	valoresTextos.placeholder="Ej.: Perro:perro,Gato:gato...";
+	nombre.value=nodo.name;
+	var rs= document.getElementsByName(nodo.name);
+	
+	for (var i = 0; i < rs.length; i++) {
+		if(i==rs.length-1){
+			valoresTextos.value+=rs[i].nextSibling.nodeValue+":"+rs[i].value;
+		}else{
+			valoresTextos.value+=rs[i].nextSibling.nodeValue+":"+rs[i].value+",";
+		}
+		
+	}
+	
+	b.addEventListener("click",function(){
+		var rsn= valoresTextos.value.split(",");
+		for (var i = 0; i < rs.length; i++) {
+			if (i<rs.length){
+				console.log(rs[i].name);
+				rs[i].name=nombre.value
+				console.log(rs[i].name);
+				rs[i].value=rsn[i].split(":")[1];
+				rs[i].nextSibling.remove();
+				rs[i].insertAdjacentHTML("afterend",rsn[i].split(":")[0]);
+			}else{
+				var r=document.createElement("input");
+				r.value=rsn[i].split(":")[1];
+				r.insertAdjacentHTML("afterend",rsn[i].split(":")[0]);
+				r.name=nombre.value;
+				contenido.appendChild(r);
+			}
+		}
+		opciones.innerHTML=null;
+	}
+	,false);
+	
+	
+	
+	opciones.appendChild(nombreCheckbox);
+	opciones.appendChild(nombre);
+	opciones.appendChild(textoValor);
+	opciones.appendChild(valoresTextos);
+	opciones.appendChild(b);
+}
+
+function radios(){
+	var opciones= document.getElementById("opciones");
+	var nombre= document.createElement("input");
+	var valoresTextos = document.createElement("textarea");
+	var nombreRadio = document.createTextNode("Nombre del radio: ");
+	var textoValor = document.createTextNode("Texto y valor de los checkbox: ");
+
+
+	
+	boton.addEventListener("click",radiosCrear,false);
+
+	nombre.id="idNombre";
+	valoresTextos.id="valoresTextos";	
+	valoresTextos.placeholder="Ej.: Perro:perro,Gato:gato...";
+	
+	opciones.appendChild(nombreRadio);
+	opciones.appendChild(nombre);
+	opciones.appendChild(textoValor);
+	opciones.appendChild(valoresTextos);
+	opciones.appendChild(boton);
+
+	
+		
+	//opciones.appendChild(valor);
+	//opciones.appendChild(boton);
+}
+function radiosCrear(){
+	var contenido=document.getElementById("contenido");
+	var opciones= document.getElementById("opciones");
+	var nombre=document.getElementById("idNombre").value;
+
+	var radios =document.getElementById("valoresTextos").value.split(",");
+	
+	
+	for(i=0;i<radios.length;i++){
+		var r = document.createElement("input");
+
+		r.value = radios[i].split(":")[1];
+		r.name=nombre;
+		r.type="radio";
+		contenido.appendChild(r);
+		var tx = document.createTextNode(radios[i].split(":")[0]);		
+		contenido.appendChild(tx);
+		
+	}
+	
+	
+	opciones.innerHTML=null;
+}
+function editarRadios(nodo){
+	var opciones= document.getElementById("opciones");
+	opciones.innerHTML=null;
+	var nombre= document.createElement("input");
+	var valoresTextos = document.createElement("textarea");
+	var nombreRadio = document.createTextNode("Nombre del radio: ");
+	var textoValor = document.createTextNode("Texto y valor de los radio: ");
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+	valoresTextos.placeholder="Ej.: Perro:perro,Gato:gato...";
+	nombre.value=nodo.name;
+	var rs= document.getElementsByName(nodo.name);
+	
+	for (var i = 0; i < rs.length; i++) {
+		if(i==rs.length-1){
+			valoresTextos.value+=rs[i].nextSibling.nodeValue+":"+rs[i].value;
+		}else{
+			valoresTextos.value+=rs[i].nextSibling.nodeValue+":"+rs[i].value+",";
+		}
+		
+	}
+	
+	b.addEventListener("click",function(){
+		var rsn= valoresTextos.value.split(",");
+		for (var i = 0; i < rs.length; i++) {
+			if (i<rs.length){
+				console.log(rs[i].name);
+				rs[i].name=nombre.value
+				console.log(rs[i].name);
+				rs[i].value=rsn[i].split(":")[1];
+				rs[i].nextSibling.remove();
+				rs[i].insertAdjacentHTML("afterend",rsn[i].split(":")[0]);
+			}else{
+				var r=document.createElement("input");
+				r.value=rsn[i].split(":")[1];
+				r.insertAdjacentHTML("afterend",rsn[i].split(":")[0]);
+				r.name=nombre.value;
+				contenido.appendChild(r);
+			}
+		}
+		opciones.innerHTML=null;
+	}
+	,false);
+	
+	
+	
+	opciones.appendChild(nombreRadio);
+	opciones.appendChild(nombre);
+	opciones.appendChild(textoValor);
+	opciones.appendChild(valoresTextos);
+	opciones.appendChild(b);
+}
+
+
+</script>
+</head>
+<body>
+	<div class="form-group"id="editBar">
+
+		<select class="form-control" onchange="cargarElemento(this.value)" name="elementos">
+
+			<script type="text/javascript">
+				opciones = [{"clave":"","valor":"Seleccione una opcion"},
+				{"clave":"cabecera","valor":"Cabeceras de nivel"},
+				{"clave":"parraf","valor":"Parrafos"},
+				{"clave":"input","valor":"Cajas de texto"},
+				{"clave":"boton","valor":"Botones"},
+				{"clave":"lista","valor":"Listas"},
+				{"clave":"checkbox","valor":"Checkbox"},
+				{"clave":"radio","valor":"Radios"}];
+				for (var i = 0; i < opciones.length; i++) {
+					document.write("<option value='"+opciones[i].clave+"'>"+opciones[i].valor+"</option>");
+				}
+			</script>
+		</select>
+		<div id="opciones"></div>
+
+	</div>
+	<div class="container">
+		<button class="btn btn-primary" onclick="aparecer()">editar</button>
+
+	</div>
+	<div id="contenido"></div>
+</body>
+</html>
