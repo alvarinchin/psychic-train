@@ -26,6 +26,7 @@
 	</style>
 	<script type="text/javascript">
 		var modoEditar=false;
+		document.oncontextmenu=function(){return false};
 		
 		/*
 	El usuario puede insertar, borrar o modificar contenido de 
@@ -41,7 +42,13 @@
 		contenido.onmousedown=edicion;
 	}
 	function edicion(e){
+
+
 		if(modoEditar){
+			console.log(e.which);
+			
+			if(e.which==1) {
+				// statement
 			
 			var nodo = e.target;
 			console.log (nodo.getAttribute("type"));
@@ -59,22 +66,35 @@
 				tipo =nodo.getAttribute("type");
 				if (tipo=="button")editarBotones(nodo);
 				if (tipo=="text")editarInputs(nodo);
+				if (tipo=="radio")editarRadios(nodo);
 				break;
-				case "LI":
+				case "OPTION":
+				editarLista(nodo.parentNode);
+				break;
+				case "SELECT":
 				editarLista(nodo);
-				break;
-				case "lista":
-				lista();
 				break;
 				case "checkbox":
 				check();
 				break;
 				case "radio":
-				radio();
+
 				break;
 				default:
 				// statements_def
 				break;
+			}
+			}
+			if(e.which==3){
+				var r = document.getElementsByName(e.target.name);
+				for (var i = 0; i < r.length; i++) {
+					r[i].nextSibling.remove();
+					r[i].remove();
+				}
+				e.target.remove();
+
+				opciones.innerHTML=null;
+			
 			}
 		}
 		
@@ -341,6 +361,35 @@ function editarLista(nodo){
 	var multi = document.createElement("input");
 	var txtam= document.createTextNode("Elige un tamaño: ");
 	var txmult= document.createTextNode("¿Múltiple?");
+	tam.type="number";
+	multi.type="checkbox";
+
+
+	nombre.value=nodo.name;
+	tam.value=nodo.getAttribute("size");
+	multi.checked=nodo.getAttribute("multiple");
+
+	for (i=0;i<nodo.options.length;i++){
+		if(i==nodo.options.length-1){
+			area.value+=nodo.options[i].innerHTML;
+		}else{
+			area.value+=nodo.options[i].innerHTML+",";
+		}
+
+	}
+	b.addEventListener("click",function(){
+		nodo.options.length="";
+		nodo.setAttribute("size",tam.value);
+		nodo.setAttribute("multiple",multi.checked);
+		var opts= area.value.split(",");
+		for (i=0;i<opts.length;i++){
+			nodo.options[i]= new Option(opts[i]);
+		}
+
+		opciones.innerHTML=null;
+	},false);
+
+
 
 	opciones.appendChild(opc);
 	opciones.appendChild(area);
@@ -420,7 +469,7 @@ function checkboxes(){
 	opciones.appendChild(boton);
 
 	
-		
+
 	//opciones.appendChild(valor);
 	//opciones.appendChild(boton);
 }
@@ -447,6 +496,77 @@ function checkboxesCrear(){
 	
 	opciones.innerHTML=null;
 }
+function editarRadios(nodo){
+
+	var opciones= document.getElementById("opciones");
+	opciones.innerHTML=null;
+	var nombre= document.createElement("input");
+	var valoresTextos = document.createElement("textarea");
+	var nombreRadio = document.createTextNode("Nombre del radio: ");
+	var textoValor = document.createTextNode("Texto y valor de los checkbox: ");
+	var b = document.createElement("input");
+	b.type="button";
+	b.value="Modificar";
+	b.className="btn btn-primary";
+	valoresTextos.placeholder="Ej.: Perro:perro,Gato:gato...";
+
+	nombre.value=nodo.name;
+
+
+	var rs= document.getElementsByName(nodo.name);
+	
+	for (var i = 0; i < rs.length; i++) {
+
+		if(i==rs.length-1){
+			valoresTextos.value+=rs[i].nextSibling.nodeValue+":"+rs[i].value;
+		}else{
+			valoresTextos.value+=rs[i].nextSibling.nodeValue+":"+rs[i].value+",";
+		}
+		
+	}
+
+	
+	b.addEventListener("click",function(){
+
+
+
+		var rsn= valoresTextos.value.split(",");
+
+		for (var i = 0; i < rs.length; i++) {
+
+			if (i<rs.length){
+				console.log(rs[i].name);
+				rs[i].name=nombre.value
+				console.log(rs[i].name);
+				rs[i].value=rsn[i].split(":")[1];
+				rs[i].nextSibling.remove();
+				rs[i].insertAdjacentHTML("afterend",rsn[i].split(":")[0]);
+			}else{
+				var r=document.createElement("input");
+				r.value=rsn[i].split(":")[1];
+				r.insertAdjacentHTML("afterend",rsn[i].split(":")[0]);
+				r.name=nombre.value;
+				contenido.appendChild(r);
+			}
+
+		}
+
+		opciones.innerHTML=null;
+
+	}
+	,false);
+
+	
+	
+	
+	opciones.appendChild(nombreRadio);
+	opciones.appendChild(nombre);
+	opciones.appendChild(textoValor);
+	opciones.appendChild(valoresTextos);
+	opciones.appendChild(b);
+
+
+}
 
 function radios(){
 	var opciones= document.getElementById("opciones");
@@ -470,7 +590,7 @@ function radios(){
 	opciones.appendChild(boton);
 
 	
-		
+
 	//opciones.appendChild(valor);
 	//opciones.appendChild(boton);
 }
